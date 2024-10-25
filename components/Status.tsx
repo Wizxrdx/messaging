@@ -7,7 +7,7 @@ export default class Status extends React.Component {
     _subscription: NetInfoSubscription | null = null;
     state = {
         info: null,
-      };
+    };
 
     _handleConnectionInfoChange = (connectionInfo: NetInfoState) => {
         this.setState({
@@ -35,7 +35,7 @@ export default class Status extends React.Component {
             <StatusBar
             backgroundColor={backgroundColor}
             barStyle={isConnected ? 'dark-content' : 'light-content'}
-            animated={false}
+            animated={true}
             />
         );
 
@@ -55,8 +55,7 @@ export default class Status extends React.Component {
                 <View style={[styles.status, { backgroundColor }]} />
             );
         }
-        
-        console.log(statusBar);
+
         return messageContainer;
     }
 }
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
         right: 0,
         left: 0,
         height: 80,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     bubble: {
         paddingHorizontal: 20,
