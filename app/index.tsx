@@ -78,14 +78,15 @@ export default class App extends React.Component {
       { this.renderFullscreenImage() }
 
       </GestureHandlerRootView>
-    </View>)
+    <Status />
+    </View>
+    );
   };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
   },
   content: {
     // flex: 1,
