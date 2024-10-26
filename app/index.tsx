@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Alert, TouchableHighlight, Image } from "react-native";
+import { Text, View, StyleSheet, Alert, TouchableHighlight, Image, BackHandler } from "react-native";
 import Status from "@/components/Status";
 import MessageList from "@/components/MessageList";
 import { createImageMessage, createLocationMessage, createTextMessage } from "@/utils/MessageUtils";
@@ -18,6 +18,8 @@ export default class App extends React.Component {
     ],
     fullscreenImageId: null,
   };
+
+  subscription: any;
 
   dismissFullscreenImage = () => {
     this.setState({ fullscreenImageId: null });
@@ -41,6 +43,21 @@ export default class App extends React.Component {
         break;
     }
   };
+
+  componentDidMount(): void {
+    this.subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      const { fullscreenImageId } = this.state;
+      if (fullscreenImageId) {
+        this.dismissFullscreenImage();
+        return true;
+      }
+      return false;
+    });
+  }
+
+  componentWillUnmount(): void {
+    this.subscription.remove();
+  }
 
   renderMessageList() {
     const { messages } = this.state;
@@ -103,7 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   fullscreenOverlay: {
-    height: '100%',
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.8)',
   },
   fullscreenImage: {
