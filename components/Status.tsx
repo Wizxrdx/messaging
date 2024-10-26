@@ -9,7 +9,7 @@ export default class Status extends React.Component {
         info: null,
     };
 
-    animatedValue = new Animated.Value(-50);
+    animatedValue = new Animated.Value(-80);
 
     _handleConnectionInfoChange = (connectionInfo: NetInfoState) => {
         this.setState({
@@ -32,7 +32,7 @@ export default class Status extends React.Component {
             const isConnected = this.state.info !== 'none';
             
             Animated.timing(this.animatedValue, {
-                toValue: isConnected ? -50 : 20,
+                toValue: isConnected ? -80 : 20,
                 duration: 300,
                 useNativeDriver: true,
             }).start();
