@@ -63,7 +63,7 @@ export default class MessageList extends React.Component<any> {
     return (
       <FlatList
         style={styles.container}
-        inverted={true}
+        inverted
         data={messages}
         renderItem={this.renderMessageItem}
         keyExtractor={KeyExtractor}
@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   image: {
-    width: 250,
-    height: 250,
+    width: 150,
+    height: 150,
     borderRadius: 10,
   },
   map: {
