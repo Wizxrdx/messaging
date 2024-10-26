@@ -1,5 +1,5 @@
 import Constants from "expo-constants";
-import { StyleSheet, View, Platform, StatusBar, Text } from "react-native";
+import { StyleSheet, View, Platform, StatusBar, Text, Animated } from "react-native";
 import { addEventListener, NetInfoState, NetInfoSubscription } from "@react-native-community/netinfo";
 import React from "react";
 
@@ -9,11 +9,13 @@ export default class Status extends React.Component {
         info: null,
     };
 
+    animatedValue = new Animated.Value(-50);
+
     _handleConnectionInfoChange = (connectionInfo: NetInfoState) => {
         this.setState({
             info: connectionInfo.type,
         });
-      };
+    }
 
     componentDidMount() {
     this._subscription = addEventListener(
@@ -25,28 +27,48 @@ export default class Status extends React.Component {
     this._subscription && this._subscription();
     }
 
+    componentDidUpdate(prevProps: any, prevState: any) {
+        if (prevState.info !== this.state.info) {
+            const isConnected = this.state.info !== 'none';
+            
+            Animated.timing(this.animatedValue, {
+                toValue: isConnected ? -50 : 20,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+        }
+    }
+
+    renderStatusBar = (isConnected: boolean) => {
+        const backgroundColor = isConnected ? 'white' : 'red';
+
+        return (
+            <StatusBar
+            backgroundColor={backgroundColor}
+            barStyle={isConnected ? 'dark-content' : 'light-content'}
+            animated={true} />
+        );
+    }
+
+    renderMessageBubble = () => {
+        return (
+            <Animated.View
+                style={[styles.bubble, { transform: [{ translateY: this.animatedValue }] }]}>
+                    <Text style={styles.text}>No network Connection</Text>
+            </Animated.View>
+        );
+    }
+
     render(): React.ReactNode {
         const { info } = this.state;
 
         const isConnected = info !== 'none';
         const backgroundColor = isConnected ? 'white' : 'red';
 
-        const statusBar = (
-            <StatusBar
-            backgroundColor={backgroundColor}
-            barStyle={isConnected ? 'dark-content' : 'light-content'}
-            animated={true}
-            />
-        );
-
         const messageContainer = (
             <View style={styles.messageContainer} pointerEvents={'none'}>
-                {statusBar}
-                {!isConnected && (
-                    <View style={styles.bubble}>
-                        <Text style={styles.text}>No network Connection</Text>
-                    </View>
-                )}
+                { this.renderStatusBar(isConnected) }
+                { this.renderMessageBubble() }
             </View>
         );
 
@@ -70,7 +92,7 @@ const styles = StyleSheet.create({
     messageContainer: {
         zIndex: 1,
         position: 'absolute',
-        top: statusHeight + 30,
+        top: statusHeight + 20,
         right: 0,
         left: 0,
         height: 80,
