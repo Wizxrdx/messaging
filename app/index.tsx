@@ -1,6 +1,7 @@
 import { Text, View, StyleSheet, Alert, TouchableHighlight, Image, BackHandler } from "react-native";
 import Status from "@/components/Status";
 import MessageList from "@/components/MessageList";
+import Toolbar from "@/components/Toolbar";
 import { createImageMessage, createLocationMessage, createTextMessage } from "@/utils/MessageUtils";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React from "react";
@@ -93,6 +94,9 @@ export default class App extends React.Component {
 
       { this.renderMessageList() }
       { this.renderFullscreenImage() }
+      <Toolbar
+        isFocused={true}
+      />
 
       </GestureHandlerRootView>
     <Status />
