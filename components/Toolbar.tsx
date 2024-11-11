@@ -56,9 +56,8 @@ export default class Toolbar extends React.Component<any> {
     };
 
     UNSAFE_componentWillReceiveProps(nextProps: Readonly<any>, nextContext: any): void {
-        console.log(nextProps.isFocused);
         if (nextProps.isFocused !== this.props.isFocused) {
-            if (nextProps.isFocused === true) {
+            if (nextProps.isFocused) {
                 this.input.focus();
             } else {
                 this.input.blur();
@@ -88,7 +87,6 @@ export default class Toolbar extends React.Component<any> {
                     style={ styles.input }
                     underlineColorAndroid={'transparent'}
                     placeholder={'Type something!'}
-                    blurOnSubmit={false}
                     value={text}
                     onChangeText={this.handleChangeText}
                     onSubmitEditing={this.handleSubmitEditing}

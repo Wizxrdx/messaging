@@ -1,10 +1,11 @@
-import { Text, View, StyleSheet, Alert, TouchableHighlight, Image, BackHandler } from "react-native";
+import { View, StyleSheet, Alert, TouchableHighlight, Image, BackHandler } from "react-native";
 import Status from "@/components/Status";
 import MessageList from "@/components/MessageList";
 import Toolbar from "@/components/Toolbar";
 import { createImageMessage, createLocationMessage, createTextMessage } from "@/utils/MessageUtils";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React from "react";
+import * as Location from 'expo-location';
 
 export default class App extends React.Component {
   state = {
@@ -18,9 +19,45 @@ export default class App extends React.Component {
       }),
     ],
     fullscreenImageId: null,
+    isInputFocused: false,
   };
 
   subscription: any;
+
+  handlePressToolbarCamera = () => {
+    
+  };
+
+  handlePressToolbarLocation = async () => {
+    const { messages } = this.state;
+
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== 'granted') {
+        Alert.alert('Location permission required', 'You need to grant location permission to send your location');
+        return;
+      }
+
+      Location.getCurrentPositionAsync().then((position: any) => {
+        const { coords: { latitude, longitude } } = position;
+        console.log(latitude, longitude);
+        this.setState({
+          messages: [createLocationMessage({ latitude, longitude }), ...messages],
+        });
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  handleChangeFocus = (isFocused: boolean) => {
+  };
+
+  handleSubmit = (text: string) => {
+    const { messages } = this.state;
+    this.setState({ messages: [createTextMessage(text), ...messages], });
+  };
 
   dismissFullscreenImage = () => {
     this.setState({ fullscreenImageId: null });
@@ -28,6 +65,7 @@ export default class App extends React.Component {
     
 
   handlePressMessage = ({id, type}: {id: number, type: string}) => {
+    this.setState({ isInputFocused: false });
     switch (type) {
       case 'text':
         Alert.alert('Message Options', 'What do you want to do?', [
@@ -58,6 +96,21 @@ export default class App extends React.Component {
 
   componentWillUnmount(): void {
     this.subscription.remove();
+  }
+
+  renderToolbar() {
+    const { isInputFocused } = this.state;
+    return (
+      <View style={ styles.toolbar }>
+        <Toolbar
+          isFocused={isInputFocused}
+          onSubmit={this.handleSubmit}
+          onChangeFocus={this.handleChangeFocus}
+          onPressCamera={this.handlePressToolbarCamera}
+          onPressLocation={this.handlePressToolbarLocation}
+          />
+      </View>
+    );
   }
 
   renderMessageList() {
@@ -93,10 +146,8 @@ export default class App extends React.Component {
       <GestureHandlerRootView>
 
       { this.renderMessageList() }
+      { this.renderToolbar() }
       { this.renderFullscreenImage() }
-      <Toolbar
-        isFocused={true}
-      />
 
       </GestureHandlerRootView>
     <Status />
@@ -110,8 +161,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    // flex: 1,
-    height: '50%',
+    flex: 1,
     backgroundColor: "white",
   },
   inputMethodEditor: {
