@@ -5,6 +5,7 @@ import  MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import { MessageShape } from '../utils/MessageUtils';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Animated, { SlideInRight } from 'react-native-reanimated';
 
 const KeyExtractor = (item: { id: { toString: () => any; }; }) => item.id.toString();
 
@@ -20,11 +21,14 @@ export default class MessageList extends React.Component<any> {
 
   renderMessageItem = ({ item }: {item: any }) => { const { onPressMessage } = this.props;
     return (
-        <View key={item.id} style={styles.messageRow}>
+        <Animated.View
+        key={item.id}
+        style={styles.messageRow}
+        entering={SlideInRight.springify().damping(500)}>
             <TouchableOpacity onPress={() => onPressMessage(item)}>
                 {this.renderMessageBody(item)}
             </TouchableOpacity>
-        </View>
+        </Animated.View>
     )
   }
 

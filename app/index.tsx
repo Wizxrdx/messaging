@@ -41,7 +41,6 @@ export default class App extends React.Component {
 
       Location.getCurrentPositionAsync().then((position: any) => {
         const { coords: { latitude, longitude } } = position;
-        console.log(latitude, longitude);
         this.setState({
           messages: [createLocationMessage({ latitude, longitude }), ...messages],
         });
